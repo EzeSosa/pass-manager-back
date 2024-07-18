@@ -6,7 +6,9 @@ import com.esosa.pass_manager.data.model.Password;
 import com.esosa.pass_manager.data.repository.IPasswordRepository;
 import com.esosa.pass_manager.service.mapper.PasswordMapper;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -30,6 +32,7 @@ public class PasswordService {
     }
 
     public PasswordResponse savePassword(PasswordRequest passwordRequest) {
+        ifExistsByNameThrowException(passwordRequest.name());
         String password = generatePassword();
         Password newPassword = PasswordMapper.buildPassword(passwordRequest, password);
         passwordRepository.save(newPassword);
@@ -37,10 +40,11 @@ public class PasswordService {
     }
 
     public PasswordResponse updatePassword(UUID passwordId, PasswordRequest passwordRequest) {
-        Password password = findPasswordByIdOrThrowException(passwordId);
-        password.setName(passwordRequest.name());
-        passwordRepository.save(password);
-        return PasswordMapper.buildPasswordResponse(password);
+        ifExistsByNameThrowException(passwordRequest.name());
+        Password existentPassword = findPasswordByIdOrThrowException(passwordId);
+        existentPassword.setName(passwordRequest.name());
+        passwordRepository.save(existentPassword);
+        return PasswordMapper.buildPasswordResponse(existentPassword);
     }
 
     public void deletePassword(UUID passwordId) {
@@ -65,5 +69,10 @@ public class PasswordService {
     private void ifNotExistsPasswordByIdThrowException(UUID passwordId) {
         if (!passwordRepository.existsById(passwordId))
             throw new NoSuchElementException();
+    }
+
+    private void ifExistsByNameThrowException(String name) {
+        if (passwordRepository.existsByName(name))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 }
