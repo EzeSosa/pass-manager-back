@@ -63,16 +63,16 @@ public class PasswordService {
 
     private Password findPasswordByIdOrThrowException(UUID passwordId) {
         return passwordRepository.findById(passwordId)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("Password with ID " + passwordId + "does not exist"));
     }
 
     private void ifNotExistsPasswordByIdThrowException(UUID passwordId) {
         if (!passwordRepository.existsById(passwordId))
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Password with ID " + passwordId + "does not exist");
     }
 
     private void ifExistsByNameThrowException(String name) {
         if (passwordRepository.existsByName(name))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name already taken");
     }
 }
