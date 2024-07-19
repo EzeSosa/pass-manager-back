@@ -31,19 +31,30 @@ public class PasswordService {
                 .toList();
     }
 
+    public PasswordResponse getPassword(UUID passwordId) {
+        Password existentPassword = findPasswordByIdOrThrowException(passwordId);
+        return PasswordMapper.buildPasswordResponse(existentPassword);
+    }
+
     public PasswordResponse savePassword(PasswordRequest passwordRequest) {
         ifExistsByNameThrowException(passwordRequest.name());
+
         String password = generatePassword();
         Password newPassword = PasswordMapper.buildPassword(passwordRequest, password);
         passwordRepository.save(newPassword);
+
         return PasswordMapper.buildPasswordResponse(newPassword);
     }
 
     public PasswordResponse updatePassword(UUID passwordId, PasswordRequest passwordRequest) {
-        ifExistsByNameThrowException(passwordRequest.name());
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
+
+        if (!existentPassword.getName().equalsIgnoreCase(passwordRequest.name()))
+            ifExistsByNameThrowException(passwordRequest.name());
+
         existentPassword.setName(passwordRequest.name());
         passwordRepository.save(existentPassword);
+
         return PasswordMapper.buildPasswordResponse(existentPassword);
     }
 
