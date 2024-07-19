@@ -1,6 +1,7 @@
 package com.esosa.pass_manager.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +29,16 @@ public class CustomExceptionHandler {
     public ExceptionMessage handleResponseStatusException(ResponseStatusException exception) {
         return new ExceptionMessage(
                 exception.getReason(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionMessage handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        return new ExceptionMessage(
+                "Password name must be between 2 and 30 characters.",
                 HttpStatus.BAD_REQUEST.value()
         );
     }
