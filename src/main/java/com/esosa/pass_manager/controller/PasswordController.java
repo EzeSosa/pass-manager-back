@@ -39,6 +39,12 @@ public class PasswordController {
         return passwordService.getPasswords();
     }
 
+    @GetMapping("/{passwordId}")
+    @ResponseStatus(HttpStatus.OK)
+    public PasswordResponse getPassword(@PathVariable UUID passwordId) {
+        return passwordService.getPassword(passwordId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PasswordResponse savePassword(@RequestBody @Valid PasswordRequest passwordRequest) {
