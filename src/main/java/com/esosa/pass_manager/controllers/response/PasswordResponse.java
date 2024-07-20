@@ -1,4 +1,4 @@
-package com.esosa.pass_manager.controller.response;
+package com.esosa.pass_manager.controllers.response;
 
 import java.util.UUID;
 

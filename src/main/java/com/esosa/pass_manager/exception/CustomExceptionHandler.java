@@ -37,6 +37,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionMessage handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        System.out.println("Path: " + exception.getNestedPath());
         return new ExceptionMessage(
                 "Password name must be between 2 and 30 characters.",
                 HttpStatus.BAD_REQUEST.value()

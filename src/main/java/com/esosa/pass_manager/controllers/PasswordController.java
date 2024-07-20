@@ -1,8 +1,8 @@
-package com.esosa.pass_manager.controller;
+package com.esosa.pass_manager.controllers;
 
-import com.esosa.pass_manager.controller.request.PasswordRequest;
-import com.esosa.pass_manager.controller.response.PasswordResponse;
-import com.esosa.pass_manager.service.PasswordService;
+import com.esosa.pass_manager.controllers.request.PasswordRequest;
+import com.esosa.pass_manager.controllers.response.PasswordResponse;
+import com.esosa.pass_manager.services.PasswordService;
 
 import jakarta.validation.Valid;
 
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,12 +30,6 @@ public class PasswordController {
 
     public PasswordController(PasswordService passwordService) {
         this.passwordService = passwordService;
-    }
-
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<PasswordResponse> getPasswords() {
-        return passwordService.getPasswords();
     }
 
     @GetMapping("/{passwordId}")

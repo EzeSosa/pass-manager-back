@@ -1,10 +1,11 @@
-package com.esosa.pass_manager.service;
+package com.esosa.pass_manager.services;
 
-import com.esosa.pass_manager.controller.request.PasswordRequest;
-import com.esosa.pass_manager.controller.response.PasswordResponse;
+import com.esosa.pass_manager.controllers.request.PasswordRequest;
+import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.Password;
-import com.esosa.pass_manager.data.repository.IPasswordRepository;
-import com.esosa.pass_manager.service.mapper.PasswordMapper;
+import com.esosa.pass_manager.data.model.User;
+import com.esosa.pass_manager.data.repositories.IPasswordRepository;
+import com.esosa.pass_manager.services.mapper.PasswordMapper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,23 +13,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
 public class PasswordService {
     private final IPasswordRepository passwordRepository;
+    private final UserService userService;
 
-    public PasswordService(IPasswordRepository passwordRepository) {
+    public PasswordService(IPasswordRepository passwordRepository, UserService userService) {
         this.passwordRepository = passwordRepository;
-    }
-
-    public List<PasswordResponse> getPasswords() {
-        return passwordRepository.findAll()
-                .stream()
-                .map(PasswordMapper::buildPasswordResponse)
-                .toList();
+        this.userService = userService;
     }
 
     public PasswordResponse getPassword(UUID passwordId) {
@@ -40,7 +35,9 @@ public class PasswordService {
         ifExistsByNameThrowException(passwordRequest.name());
 
         String password = generatePassword();
-        Password newPassword = PasswordMapper.buildPassword(passwordRequest, password);
+        User user = userService.findUserByIdOrThrowException(passwordRequest.userId());
+        Password newPassword = PasswordMapper.buildPassword(passwordRequest, password, user);
+
         passwordRepository.save(newPassword);
 
         return PasswordMapper.buildPasswordResponse(newPassword);

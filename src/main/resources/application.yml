@@ -8,3 +8,7 @@ spring:
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+jwt:
+  key: ${JWT_KEY:ts5r/cjd7FasOcNkwdwh5iy70LDT65PY2b/J56j5+5Y=}
+  access-token-expiration: 14400000

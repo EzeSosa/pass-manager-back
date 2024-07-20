@@ -1,4 +1,4 @@
-package com.esosa.pass_manager.data.repository;
+package com.esosa.pass_manager.data.repositories;
 
 import com.esosa.pass_manager.data.model.Password;
 import org.springframework.data.jpa.repository.JpaRepository;
