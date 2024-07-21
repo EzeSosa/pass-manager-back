@@ -1,6 +1,7 @@
 package com.esosa.pass_manager.services;
 
-import com.esosa.pass_manager.controllers.request.PasswordRequest;
+import com.esosa.pass_manager.controllers.request.CreatePasswordRequest;
+import com.esosa.pass_manager.controllers.request.UpdatePasswordRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.Password;
 import com.esosa.pass_manager.data.model.User;
@@ -31,25 +32,25 @@ public class PasswordService {
         return PasswordMapper.buildPasswordResponse(existentPassword);
     }
 
-    public PasswordResponse savePassword(PasswordRequest passwordRequest) {
-        ifExistsByNameThrowException(passwordRequest.name());
+    public PasswordResponse savePassword(CreatePasswordRequest createPasswordRequest) {
+        ifExistsByNameThrowException(createPasswordRequest.name());
 
         String password = generatePassword();
-        User user = userService.findUserByIdOrThrowException(passwordRequest.userId());
-        Password newPassword = PasswordMapper.buildPassword(passwordRequest, password, user);
+        User user = userService.findUserByIdOrThrowException(createPasswordRequest.userId());
+        Password newPassword = PasswordMapper.buildPassword(createPasswordRequest, password, user);
 
         passwordRepository.save(newPassword);
 
         return PasswordMapper.buildPasswordResponse(newPassword);
     }
 
-    public PasswordResponse updatePassword(UUID passwordId, PasswordRequest passwordRequest) {
+    public PasswordResponse updatePassword(UUID passwordId, UpdatePasswordRequest updatePasswordRequest) {
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
 
-        if (!existentPassword.getName().equalsIgnoreCase(passwordRequest.name()))
-            ifExistsByNameThrowException(passwordRequest.name());
+        if (!existentPassword.getName().equalsIgnoreCase(updatePasswordRequest.name()))
+            ifExistsByNameThrowException(updatePasswordRequest.name());
 
-        existentPassword.setName(passwordRequest.name());
+        existentPassword.setName(updatePasswordRequest.name());
         passwordRepository.save(existentPassword);
 
         return PasswordMapper.buildPasswordResponse(existentPassword);
