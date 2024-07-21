@@ -33,6 +33,10 @@ public class Password {
         return this.password;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
     public UUID getId() {
         return this.id;
     }

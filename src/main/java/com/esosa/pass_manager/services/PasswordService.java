@@ -33,12 +33,12 @@ public class PasswordService {
     }
 
     public PasswordResponse savePassword(CreatePasswordRequest createPasswordRequest) {
-        ifExistsByNameThrowException(createPasswordRequest.name());
-
         String password = generatePassword();
         User user = userService.findUserByIdOrThrowException(createPasswordRequest.userId());
-        Password newPassword = PasswordMapper.buildPassword(createPasswordRequest, password, user);
 
+        ifExistsPasswordForUserThrowException(user, createPasswordRequest.name());
+
+        Password newPassword = PasswordMapper.buildPassword(createPasswordRequest, password, user);
         passwordRepository.save(newPassword);
 
         return PasswordMapper.buildPasswordResponse(newPassword);
@@ -48,7 +48,7 @@ public class PasswordService {
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
 
         if (!existentPassword.getName().equalsIgnoreCase(updatePasswordRequest.name()))
-            ifExistsByNameThrowException(updatePasswordRequest.name());
+            ifExistsPasswordForUserThrowException(existentPassword.getUser(), updatePasswordRequest.name());
 
         existentPassword.setName(updatePasswordRequest.name());
         passwordRepository.save(existentPassword);
@@ -80,8 +80,8 @@ public class PasswordService {
             throw new NoSuchElementException("Password with ID " + passwordId + "does not exist");
     }
 
-    private void ifExistsByNameThrowException(String name) {
-        if (passwordRepository.existsByName(name))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name already taken");
+    private void ifExistsPasswordForUserThrowException(User user, String passwordName) {
+        if (userService.userHasPasswordName(user, passwordName))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password name already exists");
     }
 }
