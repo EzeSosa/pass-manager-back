@@ -1,6 +1,7 @@
 package com.esosa.pass_manager.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -37,10 +39,29 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionMessage handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        System.out.println("Path: " + exception.getNestedPath());
         return new ExceptionMessage(
-                "Password name must be between 2 and 30 characters.",
+                exception.getMessage(),
                 HttpStatus.BAD_REQUEST.value()
+        );
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ExceptionMessage handleBadCredentialsException(BadCredentialsException exception) {
+        return new ExceptionMessage(
+                exception.getMessage(),
+                HttpStatus.UNAUTHORIZED.value()
+        );
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionMessage handleAccessDeniedException(AccessDeniedException exception) {
+        return new ExceptionMessage(
+                exception.getMessage(),
+                HttpStatus.FORBIDDEN.value()
         );
     }
 }

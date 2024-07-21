@@ -1,6 +1,7 @@
 package com.esosa.pass_manager.security.filter;
 
 import com.esosa.pass_manager.security.jwt.JWTService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        String username = null;
         final String token = extractTokenFromRequest(request);
 
         if (token == null) {
@@ -42,7 +44,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = jwtService.extractUsernameFromToken(token);
+        try { username = jwtService.extractUsernameFromToken(token); }
+        catch (ExpiredJwtException e) {
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT expired");
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
