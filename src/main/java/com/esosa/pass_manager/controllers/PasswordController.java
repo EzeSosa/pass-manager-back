@@ -1,6 +1,7 @@
 package com.esosa.pass_manager.controllers;
 
-import com.esosa.pass_manager.controllers.request.PasswordRequest;
+import com.esosa.pass_manager.controllers.request.CreatePasswordRequest;
+import com.esosa.pass_manager.controllers.request.UpdatePasswordRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.services.PasswordService;
 
@@ -38,17 +39,17 @@ public class PasswordController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PasswordResponse savePassword(@RequestBody @Valid PasswordRequest passwordRequest) {
-        return passwordService.savePassword(passwordRequest);
+    public PasswordResponse savePassword(@RequestBody @Valid CreatePasswordRequest createPasswordRequest) {
+        return passwordService.savePassword(createPasswordRequest);
     }
 
     @PatchMapping("/{passwordId}")
     @ResponseStatus(HttpStatus.OK)
     public PasswordResponse updatePassword(
             @PathVariable UUID passwordId,
-            @RequestBody @Valid PasswordRequest passwordRequest
+            @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest
     ) {
-        return passwordService.updatePassword(passwordId, passwordRequest);
+        return passwordService.updatePassword(passwordId, updatePasswordRequest);
     }
 
     @DeleteMapping("/{passwordId}")
