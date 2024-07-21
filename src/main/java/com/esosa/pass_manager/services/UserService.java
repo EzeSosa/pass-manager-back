@@ -47,6 +47,12 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("User with username " + username + "does not exist"));
     }
 
+    public boolean userHasPasswordName(User user, String passwordName) {
+        return user.getPasswords()
+                .stream()
+                .anyMatch(password -> password.getName().equalsIgnoreCase(passwordName));
+    }
+
     private void validateExistsUsername(String username) {
         if (userRepository.existsByUsername(username))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already taken");
