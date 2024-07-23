@@ -40,7 +40,7 @@ public class CustomExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionMessage handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return new ExceptionMessage(
-                exception.getMessage(),
+                exception.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
                 HttpStatus.BAD_REQUEST.value()
         );
     }
