@@ -4,32 +4,31 @@ import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IUserRepository;
-import com.esosa.pass_manager.services.mapper.PasswordMapper;
 import com.esosa.pass_manager.services.mapper.UserMapper;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
 public class UserService {
     private final IUserRepository userRepository;
+    private final PasswordService passwordService;
 
-    public UserService(IUserRepository userRepository) {
+    public UserService(IUserRepository userRepository, @Lazy PasswordService passwordService) {
         this.userRepository = userRepository;
+        this.passwordService = passwordService;
     }
 
-    public List<PasswordResponse> getUserPasswords(UUID userId) {
-        return findUserByIdOrThrowException(userId)
-                .getPasswords()
-                .stream()
-                .map(PasswordMapper::buildPasswordResponse)
-                .toList();
+    public Page<PasswordResponse> getUserPasswords(UUID userId, int pageNumber, int size) {
+        User user = findUserByIdOrThrowException(userId);
+        return passwordService.getUserPasswords(user, pageNumber, size);
     }
 
     public User findUserByIdOrThrowException(UUID userId) {

@@ -8,6 +8,8 @@ import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IPasswordRepository;
 import com.esosa.pass_manager.services.mapper.PasswordMapper;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +27,11 @@ public class PasswordService {
     public PasswordService(IPasswordRepository passwordRepository, UserService userService) {
         this.passwordRepository = passwordRepository;
         this.userService = userService;
+    }
+
+    public Page<PasswordResponse> getUserPasswords(User user, int pageNumber, int size) {
+        return passwordRepository.findByUser(PageRequest.of(pageNumber, size), user)
+                .map(PasswordMapper::buildPasswordResponse);
     }
 
     public PasswordResponse getPassword(UUID passwordId) {
