@@ -1,35 +1,27 @@
-package com.esosa.pass_manager.controllers;
+package com.esosa.pass_manager.controllers.implementations;
 
+import com.esosa.pass_manager.controllers.interfaces.IAuthController;
 import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.AuthResponse;
 import com.esosa.pass_manager.services.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
-@Validated
-public class AuthController {
+public class AuthController implements IAuthController {
     private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public void register(@RequestBody @Valid AuthRequest registerRequest) {
         authService.register(registerRequest);
     }
 
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public AuthResponse login(@RequestBody @Valid AuthRequest authRequest) {
         return authService.login(authRequest);
     }
