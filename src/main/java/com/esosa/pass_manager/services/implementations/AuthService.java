@@ -4,6 +4,7 @@ import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.AuthResponse;
 import com.esosa.pass_manager.security.jwt.JWTService;
 import com.esosa.pass_manager.services.interfaces.IAuthService;
+import com.esosa.pass_manager.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,17 +18,18 @@ import java.util.UUID;
 
 @Service
 public class AuthService implements IAuthService {
-    private final UserService userService;
+    private final IUserService userService;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(
-            UserService userService,
+            IUserService userService,
             UserDetailsService userDetailsService,
             AuthenticationManager authenticationManager,
-            JWTService jwtService, PasswordEncoder passwordEncoder
+            JWTService jwtService,
+            PasswordEncoder passwordEncoder
     ) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
