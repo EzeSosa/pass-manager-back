@@ -1,9 +1,10 @@
-package com.esosa.pass_manager.services;
+package com.esosa.pass_manager.services.implementations;
 
 import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IUserRepository;
+import com.esosa.pass_manager.services.interfaces.IUserService;
 import com.esosa.pass_manager.services.mapper.UserMapper;
 
 import org.springframework.context.annotation.Lazy;
@@ -17,7 +18,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final PasswordService passwordService;
 
@@ -26,26 +27,31 @@ public class UserService {
         this.passwordService = passwordService;
     }
 
+    @Override
     public Page<PasswordResponse> getUserPasswords(UUID userId, int pageNumber, int size) {
         User user = findUserByIdOrThrowException(userId);
         return passwordService.getUserPasswords(user, pageNumber, size);
     }
 
+    @Override
     public User findUserByIdOrThrowException(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + "does not exist"));
     }
 
-    public void saveUser(AuthRequest registerRequest, PasswordEncoder passwordEncoder) {
-        validateExistsUsername(registerRequest.username());
-        userRepository.save(UserMapper.buildUser(registerRequest, passwordEncoder));
+    @Override
+    public void saveUser(AuthRequest authRequest, PasswordEncoder passwordEncoder) {
+        validateExistsUsername(authRequest.username());
+        userRepository.save(UserMapper.buildUser(authRequest, passwordEncoder));
     }
 
+    @Override
     public User findUserByUsernameOrThrowException(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User with username " + username + "does not exist"));
     }
 
+    @Override
     public boolean userHasPasswordName(User user, String passwordName) {
         return user.getPasswords()
                 .stream()

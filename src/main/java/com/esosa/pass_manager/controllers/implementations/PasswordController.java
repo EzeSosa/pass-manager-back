@@ -4,7 +4,7 @@ import com.esosa.pass_manager.controllers.interfaces.IPasswordController;
 import com.esosa.pass_manager.controllers.request.CreatePasswordRequest;
 import com.esosa.pass_manager.controllers.request.UpdatePasswordRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
-import com.esosa.pass_manager.services.PasswordService;
+import com.esosa.pass_manager.services.implementations.PasswordService;
 
 import jakarta.validation.Valid;
 
