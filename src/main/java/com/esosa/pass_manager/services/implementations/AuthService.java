@@ -1,8 +1,9 @@
-package com.esosa.pass_manager.services;
+package com.esosa.pass_manager.services.implementations;
 
 import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.AuthResponse;
 import com.esosa.pass_manager.security.jwt.JWTService;
+import com.esosa.pass_manager.services.interfaces.IAuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +16,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class AuthService {
+public class AuthService implements IAuthService {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
@@ -38,10 +39,12 @@ public class AuthService {
     @Value("${jwt.access-token-expiration}")
     private Long accessTokenExpiration;
 
+    @Override
     public void register(AuthRequest registerRequest) {
         userService.saveUser(registerRequest, passwordEncoder);
     }
 
+    @Override
     public AuthResponse login(AuthRequest authRequest) {
         authenticateUser(authRequest);
 

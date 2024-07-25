@@ -3,7 +3,7 @@ package com.esosa.pass_manager.controllers.implementations;
 import com.esosa.pass_manager.controllers.interfaces.IAuthController;
 import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.AuthResponse;
-import com.esosa.pass_manager.services.AuthService;
+import com.esosa.pass_manager.services.implementations.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

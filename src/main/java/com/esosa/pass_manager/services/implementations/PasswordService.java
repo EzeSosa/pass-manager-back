@@ -1,4 +1,4 @@
-package com.esosa.pass_manager.services;
+package com.esosa.pass_manager.services.implementations;
 
 import com.esosa.pass_manager.controllers.request.CreatePasswordRequest;
 import com.esosa.pass_manager.controllers.request.UpdatePasswordRequest;
@@ -6,6 +6,7 @@ import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.Password;
 import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IPasswordRepository;
+import com.esosa.pass_manager.services.interfaces.IPasswordService;
 import com.esosa.pass_manager.services.mapper.PasswordMapper;
 
 import org.springframework.data.domain.Page;
@@ -20,7 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
-public class PasswordService {
+public class PasswordService implements IPasswordService {
     private final IPasswordRepository passwordRepository;
     private final UserService userService;
 
@@ -29,16 +30,19 @@ public class PasswordService {
         this.userService = userService;
     }
 
+    @Override
     public Page<PasswordResponse> getUserPasswords(User user, int pageNumber, int size) {
         return passwordRepository.findByUser(PageRequest.of(pageNumber, size), user)
                 .map(PasswordMapper::buildPasswordResponse);
     }
 
+    @Override
     public PasswordResponse getPassword(UUID passwordId) {
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
         return PasswordMapper.buildPasswordResponse(existentPassword);
     }
 
+    @Override
     public PasswordResponse savePassword(CreatePasswordRequest createPasswordRequest) {
         String password = generatePassword();
         User user = userService.findUserByIdOrThrowException(createPasswordRequest.userId());
@@ -51,6 +55,7 @@ public class PasswordService {
         return PasswordMapper.buildPasswordResponse(newPassword);
     }
 
+    @Override
     public PasswordResponse updatePassword(UUID passwordId, UpdatePasswordRequest updatePasswordRequest) {
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
 
@@ -63,6 +68,7 @@ public class PasswordService {
         return PasswordMapper.buildPasswordResponse(existentPassword);
     }
 
+    @Override
     public void deletePassword(UUID passwordId) {
         ifNotExistsPasswordByIdThrowException(passwordId);
         passwordRepository.deleteById(passwordId);
