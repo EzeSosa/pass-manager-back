@@ -4,6 +4,7 @@ import com.esosa.pass_manager.controllers.request.AuthRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
 import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IUserRepository;
+import com.esosa.pass_manager.services.interfaces.IPasswordService;
 import com.esosa.pass_manager.services.interfaces.IUserService;
 import com.esosa.pass_manager.services.mapper.UserMapper;
 
@@ -20,9 +21,9 @@ import java.util.UUID;
 @Service
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
-    private final PasswordService passwordService;
+    private final IPasswordService passwordService;
 
-    public UserService(IUserRepository userRepository, @Lazy PasswordService passwordService) {
+    public UserService(IUserRepository userRepository, @Lazy IPasswordService passwordService) {
         this.userRepository = userRepository;
         this.passwordService = passwordService;
     }

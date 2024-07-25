@@ -4,8 +4,8 @@ import com.esosa.pass_manager.controllers.interfaces.IPasswordController;
 import com.esosa.pass_manager.controllers.request.CreatePasswordRequest;
 import com.esosa.pass_manager.controllers.request.UpdatePasswordRequest;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
-import com.esosa.pass_manager.services.implementations.PasswordService;
 
+import com.esosa.pass_manager.services.interfaces.IPasswordService;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +16,9 @@ import java.util.UUID;
 
 @RestController
 public class PasswordController implements IPasswordController {
-    private final PasswordService passwordService;
+    private final IPasswordService passwordService;
 
-    public PasswordController(PasswordService passwordService) {
+    public PasswordController(IPasswordService passwordService) {
         this.passwordService = passwordService;
     }
 

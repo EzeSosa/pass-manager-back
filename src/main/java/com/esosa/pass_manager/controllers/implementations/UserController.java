@@ -2,7 +2,7 @@ package com.esosa.pass_manager.controllers.implementations;
 
 import com.esosa.pass_manager.controllers.interfaces.IUserController;
 import com.esosa.pass_manager.controllers.response.PasswordResponse;
-import com.esosa.pass_manager.services.implementations.UserService;
+import com.esosa.pass_manager.services.interfaces.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @RestController
 public class UserController implements IUserController {
-    private final UserService userService;
+    private final IUserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(IUserService userService) {
         this.userService = userService;
     }
 

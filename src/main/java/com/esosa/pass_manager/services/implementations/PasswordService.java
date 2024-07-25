@@ -7,6 +7,7 @@ import com.esosa.pass_manager.data.model.Password;
 import com.esosa.pass_manager.data.model.User;
 import com.esosa.pass_manager.data.repositories.IPasswordRepository;
 import com.esosa.pass_manager.services.interfaces.IPasswordService;
+import com.esosa.pass_manager.services.interfaces.IUserService;
 import com.esosa.pass_manager.services.mapper.PasswordMapper;
 
 import org.springframework.data.domain.Page;
@@ -23,9 +24,9 @@ import java.util.UUID;
 @Service
 public class PasswordService implements IPasswordService {
     private final IPasswordRepository passwordRepository;
-    private final UserService userService;
+    private final IUserService userService;
 
-    public PasswordService(IPasswordRepository passwordRepository, UserService userService) {
+    public PasswordService(IPasswordRepository passwordRepository, IUserService userService) {
         this.passwordRepository = passwordRepository;
         this.userService = userService;
     }
@@ -44,11 +45,10 @@ public class PasswordService implements IPasswordService {
 
     @Override
     public PasswordResponse savePassword(CreatePasswordRequest createPasswordRequest) {
-        String password = generatePassword();
         User user = userService.findUserByIdOrThrowException(createPasswordRequest.userId());
+        ifExistsPasswordNameForUserThrowException(user, createPasswordRequest.name());
 
-        ifExistsPasswordForUserThrowException(user, createPasswordRequest.name());
-
+        String password = generatePassword();
         Password newPassword = PasswordMapper.buildPassword(createPasswordRequest, password, user);
         passwordRepository.save(newPassword);
 
@@ -60,7 +60,7 @@ public class PasswordService implements IPasswordService {
         Password existentPassword = findPasswordByIdOrThrowException(passwordId);
 
         if (!existentPassword.getName().equalsIgnoreCase(updatePasswordRequest.name()))
-            ifExistsPasswordForUserThrowException(existentPassword.getUser(), updatePasswordRequest.name());
+            ifExistsPasswordNameForUserThrowException(existentPassword.getUser(), updatePasswordRequest.name());
 
         existentPassword.setName(updatePasswordRequest.name());
         passwordRepository.save(existentPassword);
@@ -93,7 +93,7 @@ public class PasswordService implements IPasswordService {
             throw new NoSuchElementException("Password with ID " + passwordId + "does not exist");
     }
 
-    private void ifExistsPasswordForUserThrowException(User user, String passwordName) {
+    private void ifExistsPasswordNameForUserThrowException(User user, String passwordName) {
         if (userService.userHasPasswordName(user, passwordName))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password name already exists");
     }
