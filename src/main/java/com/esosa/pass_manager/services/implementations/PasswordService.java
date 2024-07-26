@@ -12,6 +12,7 @@ import com.esosa.pass_manager.services.mapper.PasswordMapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,7 +34,8 @@ public class PasswordService implements IPasswordService {
 
     @Override
     public Page<PasswordResponse> getUserPasswords(User user, int pageNumber, int size) {
-        return passwordRepository.findByUser(PageRequest.of(pageNumber, size), user)
+        PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by("name"));
+        return passwordRepository.findByUser(pageRequest, user)
                 .map(PasswordMapper::buildPasswordResponse);
     }
 
