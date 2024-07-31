@@ -1,5 +1,6 @@
 package com.esosa.pass_manager.security.filter;
 
+import com.esosa.pass_manager.config.WhiteListUrls;
 import com.esosa.pass_manager.security.jwt.JWTService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -14,10 +15,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
@@ -59,6 +62,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        return Arrays.stream(WhiteListUrls.WHITE_LIST_URLS).anyMatch(
+                url -> pathMatcher.match(url, request.getRequestURI())
+        );
     }
 
     private void updateContext(HttpServletRequest request, UserDetails userDetails) {
